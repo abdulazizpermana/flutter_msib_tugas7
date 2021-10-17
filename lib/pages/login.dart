@@ -1,5 +1,3 @@
-// ignore_for_file: unused_local_variable
-
 import 'package:flutter/material.dart';
 import 'package:flutter_msib_tugas7/common/app_route.dart';
 import 'package:flutter_msib_tugas7/common/constant.dart';
@@ -8,86 +6,6 @@ import 'package:flutter_msib_tugas7/network/api_client.dart';
 import 'package:flutter_msib_tugas7/widget/text_field_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// class LoginPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         leading: Icon(Icons.list),
-//         title: Text("Formulir"),
-//         backgroundColor: Colors.blue,
-//       ),
-//       body: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Container(
-//             child: Container(
-//               padding: EdgeInsets.all(10.0),
-//               child: Column(
-//                 children: <Widget>[
-//                   Text(
-//                     "Login",
-//                     style: TextStyle(
-//                       fontSize: 25,
-//                     ),
-//                   ),
-//                   SizedBox(
-//                     height: 30,
-//                   ),
-//                   TextField(
-//                     decoration: InputDecoration(
-//                       hintText: "Username",
-//                       labelText: "Username atau email",
-//                       border: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(10.0),
-//                       ),
-//                     ),
-//                   ),
-//                   Padding(
-//                     padding: EdgeInsets.only(top: 20),
-//                   ),
-//                   TextField(
-//                     obscureText: true,
-//                     decoration: InputDecoration(
-//                       hintText: "Password",
-//                       labelText: "Password",
-//                       border: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(10.0),
-//                       ),
-//                     ),
-//                   ),
-//                   Padding(
-//                     padding: EdgeInsets.only(top: 20),
-//                   ),
-//                   Container(
-//                     width: 100,
-//                     height: 45,
-//                     child: TextButton(
-//                       style: TextButton.styleFrom(
-//                         backgroundColor: Color(0xff1597E5),
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.circular(20),
-//                         ),
-//                       ),
-//                       onPressed: () {},
-//                       child: Text(
-//                         "Login",
-//                         style: TextStyle(
-//                           color: Color(0xffffffff),
-//                           fontSize: 18,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -127,10 +45,10 @@ class _LoginPageState extends State<LoginPage> {
 
   List<Widget> _listTextInput() {
     return <Widget>[
-      SizedBox(
+      const SizedBox(
         height: 230,
       ),
-      Center(
+      const Center(
         child: Text(
           'Login',
           style: TextStyle(
@@ -139,16 +57,12 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-      SizedBox(
+      const SizedBox(
         height: 20,
       ),
       TextFieldLogin(
         controller: _controllerEmail,
         labelText: 'Email',
-        suffixIconData: Icons.info,
-        onPressedIcon: () {
-          _controllerEmail.text = Constant.trueEmail;
-        },
         keyboardType: TextInputType.emailAddress,
         enable: !_onSend,
       ),
@@ -166,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
       SizedBox(
         height: 30,
       ),
-      Center(
+      const Center(
         child: Text(
           'Atau',
           style: TextStyle(
@@ -174,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-      SizedBox(
+      const SizedBox(
         height: 30,
       ),
       SizedBox(
@@ -189,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.circular(20.0),
             ),
           ),
-          child: Text(
+          child: const Text(
             "Continue Without Login",
           ),
         ),
@@ -206,11 +120,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_reqResLogin.token?.isNotEmpty ?? false) {
       SharedPreferences _preferences = await SharedPreferences.getInstance();
       await _preferences.setString(Constant.keyToken, _reqResLogin.token!);
-      Navigator.pushReplacementNamed(
-        context,
-        AppRoute.homeRoute,
-        arguments: _reqResLogin.token,
-      );
+      Navigator.pop(context, _reqResLogin.token!);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
