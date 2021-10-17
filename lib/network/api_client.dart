@@ -42,7 +42,7 @@ class ApiClients {
   static Future<ReqResLogin> getToken(
       {required String email, required String password}) async {
     Response _response = await post(
-      Uri.parse("https://gits-msib.my.id/wp-json/jwt-auth/v1/token"),
+      Uri.parse("${Constant.baseUrl}jwt-auth/v1/token"),
       body: <String, String>{"username": email, "password": password},
     );
 
