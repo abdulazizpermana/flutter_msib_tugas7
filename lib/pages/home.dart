@@ -49,8 +49,14 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    Widget iconStatus() =>
-        (token.isEmpty) ? const Icon(Icons.login) : const Icon(Icons.logout);
+    Widget iconStatus() => (token.isEmpty)
+        ? const Icon(
+            Icons.login,
+          )
+        : const Icon(
+            Icons.logout,
+            color: Colors.black,
+          );
 
     return Scaffold(
       appBar: AppBar(
