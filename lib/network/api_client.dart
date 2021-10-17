@@ -1,3 +1,6 @@
+import 'package:flutter_msib_tugas7/model/req_login.dart';
+import 'package:http/http.dart';
+
 import '../model/blog_data.dart';
 import '../model/search_post.dart';
 
@@ -33,5 +36,17 @@ class ApiClient {
     } else {
       throw Exception('Failed to load album');
     }
+  }
+}
+
+class ApiClients {
+  static Future<ReqResLogin> getToken(
+      {required String email, required String password}) async {
+    Response _response = await post(
+      Uri.parse("https://gits-msib.my.id/wp-json/jwt-auth/v1/token"),
+      body: <String, String>{"username": email, "password": password},
+    );
+
+    return ReqResLogin.fromJson(_response.body);
   }
 }
