@@ -5,7 +5,6 @@ import 'package:flutter_msib_tugas7/pages/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../network/api_client.dart';
 import '../pages/search_page.dart';
-
 import '../model/blog_data.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,33 +22,63 @@ class _HomePageState extends State<HomePage> {
     init();
   }
 
+  String token = '';
+
   @override
   Widget build(BuildContext context) {
+    Object? args = ModalRoute.of(context)?.settings.arguments;
+    if (args is String) token = args;
+
+    Widget _signOutDialog(BuildContext context) {
+      return AlertDialog(
+        title: const Text('Sign Out'),
+        content: const Text('Are you sure you want to sign out?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () async {
+              await _signOut();
+              Navigator.pop(context);
+            },
+            child: const Text('YES'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('NO'),
+          ),
+        ],
+      );
+    }
+
+    Widget iconStatus() =>
+        (token.isEmpty) ? const Icon(Icons.login) : const Icon(Icons.logout);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('FlutterBlog'),
+        title: const Text('FlutterBlog'),
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => SearchPage(),
-                ),
+                AppRoute.searchRoute,
               );
             },
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
           ),
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginPage(),
-                ),
-              );
+              if (token.isEmpty) {
+                moveToLoginPage();
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => _signOutDialog(context),
+                ).then(
+                  (value) => setState(() {}),
+                );
+              }
             },
-            icon: Icon(Icons.person),
+            icon: iconStatus(),
           )
         ],
       ),
@@ -66,28 +95,38 @@ class _HomePageState extends State<HomePage> {
                     post.excerpt ?? "",
                     maxLines: 4,
                   ),
-                  trailing: Icon(Icons.more_vert),
+                  trailing: const Icon(Icons.more_vert),
                   isThreeLine: true,
                 );
               },
-              separatorBuilder: (context, index) => Divider(),
+              separatorBuilder: (context, index) => const Divider(),
               itemCount: posts.length,
             ),
     );
   }
 
   Future init() async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    token = _preferences.getString(Constant.keyToken) ?? '';
     await ApiClient.getData();
     setState(() {});
   }
-}
 
-Future<void> _signOut(BuildContext context) async {
-  SharedPreferences _preferences = await SharedPreferences.getInstance();
-  await _preferences.remove(Constant.keyToken);
-  Navigator.pushNamedAndRemoveUntil(
-    context,
-    AppRoute.loginRoute,
-    (Route route) => false,
-  );
+  Future<void> _signOut() async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    await _preferences.remove(Constant.keyToken);
+    token = _preferences.getString(Constant.keyToken) ?? '';
+  }
+
+  void moveToLoginPage() async {
+    final getToken = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LoginPage(),
+      ),
+    );
+    setState(() {
+      token = getToken;
+    });
+  }
 }
