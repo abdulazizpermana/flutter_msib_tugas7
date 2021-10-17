@@ -1,6 +1,5 @@
 import '../model/blog_data.dart';
 import '../model/search_post.dart';
-
 import '../common/constant.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
