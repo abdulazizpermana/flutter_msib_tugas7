@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_msib_tugas7/common/app_route.dart';
 import 'package:flutter_msib_tugas7/common/constant.dart';
 import 'package:flutter_msib_tugas7/pages/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,8 +35,8 @@ class _HomePageState extends State<HomePage> {
         content: const Text('Are you sure you want to sign out?'),
         actions: <Widget>[
           TextButton(
-            onPressed: () {
-              _signOut();
+            onPressed: () async {
+              await _signOut();
               Navigator.pop(context);
             },
             child: const Text('YES'),
@@ -49,22 +50,20 @@ class _HomePageState extends State<HomePage> {
     }
 
     Widget iconStatus() =>
-        (token.isEmpty) ? Icon(Icons.login) : Icon(Icons.logout);
+        (token.isEmpty) ? const Icon(Icons.login) : const Icon(Icons.logout);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('FlutterBlog'),
+        title: const Text('FlutterBlog'),
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => SearchPage(),
-                ),
+                AppRoute.searchRoute,
               );
             },
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
           ),
           IconButton(
             onPressed: () {
@@ -74,9 +73,9 @@ class _HomePageState extends State<HomePage> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) => _signOutDialog(context),
-                ).then((value) => setState(() {
-                      token = '';
-                    }));
+                ).then(
+                  (value) => setState(() {}),
+                );
               }
             },
             icon: iconStatus(),
@@ -116,6 +115,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _signOut() async {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
     await _preferences.remove(Constant.keyToken);
+    token = _preferences.getString(Constant.keyToken) ?? '';
   }
 
   void moveToLoginPage() async {
