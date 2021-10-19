@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class Post {
   int? id;
   String? title;
@@ -29,5 +27,3 @@ class Post {
         author: json['author'].toString());
   }
 }
-
-List<Post> posts = [];

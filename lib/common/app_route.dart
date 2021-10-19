@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_msib_tugas7/pages/home.dart';
-import 'package:flutter_msib_tugas7/pages/login.dart';
-import 'package:flutter_msib_tugas7/pages/search_page.dart';
+import '../pages/home.dart';
+import '../pages/login.dart';
+import '../pages/search_page.dart';
 
 class AppRoute {
   static const String loginRoute = '/login';

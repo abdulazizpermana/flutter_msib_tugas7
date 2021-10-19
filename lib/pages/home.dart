@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_msib_tugas7/common/app_route.dart';
-import 'package:flutter_msib_tugas7/common/constant.dart';
-import 'package:flutter_msib_tugas7/pages/login.dart';
+import '../common/app_route.dart';
+import '../provider/login_provider.dart';
+import '../provider/post_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../network/api_client.dart';
-import '../pages/search_page.dart';
-import '../model/blog_data.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,16 +17,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    init();
+    Provider.of<LoginProvider>(context, listen: false);
   }
-
-  String token = '';
 
   @override
   Widget build(BuildContext context) {
-    Object? args = ModalRoute.of(context)?.settings.arguments;
-    if (args is String) token = args;
-
     Widget _signOutDialog(BuildContext context) {
       return AlertDialog(
         title: const Text('Sign Out'),
@@ -49,15 +42,6 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    Widget iconStatus() => (token.isEmpty)
-        ? const Icon(
-            Icons.login,
-          )
-        : const Icon(
-            Icons.logout,
-            color: Colors.black,
-          );
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('FlutterBlog'),
@@ -71,68 +55,69 @@ class _HomePageState extends State<HomePage> {
             },
             icon: const Icon(Icons.search),
           ),
-          IconButton(
-            onPressed: () {
-              if (token.isEmpty) {
-                moveToLoginPage();
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => _signOutDialog(context),
-                ).then(
-                  (value) => setState(() {}),
-                );
-              }
-            },
-            icon: iconStatus(),
-          )
+          Consumer<LoginProvider>(
+            builder: (context, provider, child) => IconButton(
+              onPressed: () {
+                if (provider.loginToken.isEmpty) {
+                  moveToLoginPage();
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => _signOutDialog(context),
+                  ).then(
+                    (value) => provider.changeLoginStatus(),
+                  );
+                }
+              },
+              icon: (provider.loginStatus)
+                  ? const Icon(
+                      Icons.logout,
+                      color: Colors.black,
+                    )
+                  : const Icon(
+                      Icons.login,
+                      color: Colors.white,
+                    ),
+            ),
+          ),
         ],
       ),
-      body: (posts.isEmpty)
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : ListView.separated(
-              itemBuilder: (context, index) {
-                final post = posts[index];
-                return ListTile(
-                  title: Text(post.title ?? ""),
-                  subtitle: Text(
-                    post.excerpt ?? "",
-                    maxLines: 4,
-                  ),
-                  trailing: const Icon(Icons.more_vert),
-                  isThreeLine: true,
-                );
-              },
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: posts.length,
-            ),
+      body: Consumer<PostProvider>(
+        builder: (context, provider, child) => (provider.loadingData)
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView.separated(
+                itemBuilder: (context, index) {
+                  final post = provider.posts[index];
+                  return ListTile(
+                    title: Text(post.title ?? ""),
+                    subtitle: Text(
+                      post.excerpt ?? "",
+                      maxLines: 4,
+                    ),
+                    trailing: const Icon(Icons.more_vert),
+                    isThreeLine: true,
+                  );
+                },
+                separatorBuilder: (context, index) => const Divider(),
+                itemCount: provider.posts.length,
+              ),
+      ),
     );
-  }
-
-  Future init() async {
-    SharedPreferences _preferences = await SharedPreferences.getInstance();
-    token = _preferences.getString(Constant.keyToken) ?? '';
-    await ApiClient.getData();
-    setState(() {});
   }
 
   Future<void> _signOut() async {
+    final loginProvider = Provider.of<LoginProvider>(context, listen: false);
     SharedPreferences _preferences = await SharedPreferences.getInstance();
-    await _preferences.remove(Constant.keyToken);
-    token = _preferences.getString(Constant.keyToken) ?? '';
+    await _preferences.remove('loginToken');
+    loginProvider.setToken('');
   }
 
   void moveToLoginPage() async {
-    final getToken = await Navigator.push(
+    Navigator.pushNamed(
       context,
-      MaterialPageRoute(
-        builder: (context) => const LoginPage(),
-      ),
+      AppRoute.loginRoute,
     );
-    setState(() {
-      token = getToken;
-    });
   }
 }

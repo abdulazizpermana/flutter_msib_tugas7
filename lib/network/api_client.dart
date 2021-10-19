@@ -1,6 +1,5 @@
-import 'package:flutter_msib_tugas7/model/req_login.dart';
+import '../model/req_login.dart';
 import 'package:http/http.dart';
-
 import '../model/blog_data.dart';
 import '../model/search_post.dart';
 import '../common/constant.dart';
@@ -23,15 +22,12 @@ class ApiClient {
     }
   }
 
-  static Future<List> getData() async {
+  static Future<List<Post>> getData() async {
     Uri uri = Uri.parse('${Constant.baseUrl}wp/v2/posts');
     http.Response response = await http.get(uri);
     if (response.statusCode == 200) {
-      for (int i = 0; i < jsonDecode(response.body).length; i++) {
-        final datum = Post.fromJSON(jsonDecode(response.body)[i]);
-        posts.add(datum);
-      }
-      return posts;
+      final List _dataPosts = json.decode(response.body);
+      return _dataPosts.map((json) => Post.fromJSON(json)).toList();
     } else {
       throw Exception('Failed to load album');
     }
