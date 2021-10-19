@@ -2,11 +2,9 @@ import 'dart:convert';
 
 class ReqResLogin {
   String? token;
-  String? error;
 
   ReqResLogin({
     this.token = "",
-    this.error = "",
   });
 
   factory ReqResLogin.fromJson(String str) {
@@ -20,14 +18,12 @@ class ReqResLogin {
   factory ReqResLogin.fromMap(Map<String, dynamic> json) {
     return ReqResLogin(
       token: json["token"],
-      error: json["error"],
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       "token": token,
-      "error": error,
     };
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_msib_tugas7/model/search_post.dart';
-import 'package:flutter_msib_tugas7/network/api_client.dart';
-import 'package:flutter_msib_tugas7/widget/search_widget.dart';
+import '../provider/search_provider.dart';
+import '../widget/search_widget.dart';
+import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -11,15 +11,10 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  bool _onSearch = false;
-  List<SearchPost> searchPosts = [];
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _onSearch = true;
-    init();
   }
 
   @override
@@ -28,55 +23,47 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         title: const Text('Halaman Search'),
       ),
-      body: Column(children: [
-        SearchWidget(
-          hintText: 'Ketikkan Judulnya',
-          onChanged: _searchPost,
-        ),
-        Expanded(
-          child: (_onSearch)
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : buildPost(),
-        )
-      ]),
+      body: Column(
+        children: [
+          SearchWidget(
+            hintText: 'Ketikkan Judulnya',
+          ),
+          Consumer<SearchProvider>(
+            builder: (context, searchProvider, child) => Expanded(
+              child: (searchProvider.onSearch)
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : buildPost(),
+            ),
+          )
+        ],
+      ),
     );
   }
 
-  Future init() async {
-    final resultPost = await ApiClient.getSearchData('');
-    setState(() {
-      _onSearch = false;
-      searchPosts = resultPost;
-    });
-  }
-
-  Future<void> _searchPost(String query) async {
-    setState(() {
-      _onSearch = true;
-    });
-    final resultPost = await ApiClient.getSearchData(query);
-    setState(() {
-      _onSearch = false;
-      searchPosts = resultPost;
-    });
-  }
-
   Widget buildPost() {
-    return (searchPosts.isEmpty)
-        ? const Center(
-            child: Text('Judul Tidak Ditemukan'),
-          )
-        : ListView.separated(
-            separatorBuilder: (context, index) => const Divider(),
-            itemCount: searchPosts.length,
-            itemBuilder: (context, index) {
-              final post = searchPosts[index];
-              return ListTile(
-                title: Text(post.title!),
-                subtitle: Text(post.url!),
-              );
-            });
+    return Consumer<SearchProvider>(
+      builder: (context, searchProvider, child) =>
+          (searchProvider.query.isEmpty)
+              ? Center(
+                  child: Text(searchProvider.message),
+                )
+              : (searchProvider.searchPosts.isEmpty)
+                  ? Center(
+                      child: Text(searchProvider.message),
+                    )
+                  : ListView.separated(
+                      separatorBuilder: (context, index) => const Divider(),
+                      itemCount: searchProvider.searchPosts.length,
+                      itemBuilder: (context, index) {
+                        final post = searchProvider.searchPosts[index];
+                        return ListTile(
+                          title: Text(post.title!),
+                          subtitle: Text(post.url!),
+                        );
+                      },
+                    ),
+    );
   }
 }
