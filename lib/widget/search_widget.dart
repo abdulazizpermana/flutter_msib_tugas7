@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class SearchWidget extends StatefulWidget {
-  String hintText;
-  TextEditingController controller;
-  VoidCallback onPressed;
+  final String hintText;
+  final TextEditingController controller;
+  final VoidCallback onPressed;
+  final ValueChanged<String> onChanged;
 
   SearchWidget({
+    required this.onChanged,
     required this.controller,
     required this.hintText,
     required this.onPressed,
@@ -40,6 +42,7 @@ class _SearchWidgetState extends State<SearchWidget> {
         ),
         keyboardType: TextInputType.text,
         textInputAction: TextInputAction.search,
+        onChanged: widget.onChanged,
         onEditingComplete: widget.onPressed,
       ),
     );

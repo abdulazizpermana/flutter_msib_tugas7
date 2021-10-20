@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../provider/search_provider.dart';
 import '../widget/search_widget.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,8 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    final searchProvider = Provider.of<SearchProvider>(context, listen: false);
+    searchProvider.init();
   }
 
   @override
@@ -31,6 +34,9 @@ class _SearchPageState extends State<SearchPage> {
               controller: controller,
               hintText: 'Ketikkan Judulnya',
               onPressed: () => searchProvider.setQuery(controller.text),
+              onChanged: (String value) {
+                (value.isEmpty) ? {searchProvider.setQuery(value)} : null;
+              },
             ),
             Expanded(
               child: (searchProvider.onSearch)

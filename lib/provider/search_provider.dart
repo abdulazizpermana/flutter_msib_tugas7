@@ -10,7 +10,6 @@ class SearchProvider extends ChangeNotifier {
   String get query => _query;
   void setQuery(String value) {
     _query = value;
-    notifyListeners();
     _getSearchPost();
   }
 
@@ -24,6 +23,11 @@ class SearchProvider extends ChangeNotifier {
   bool _onSearch = false;
   bool get onSearch => _onSearch;
 
+  void init() {
+    _searchPosts = [];
+    _message = '';
+  }
+
   Future<dynamic> _getSearchPost() async {
     if (_query.isNotEmpty) {
       changeOnSearch();
@@ -33,6 +37,7 @@ class SearchProvider extends ChangeNotifier {
           : setMessage('');
       changeOnSearch();
     } else {
+      init();
       setMessage('');
     }
   }
