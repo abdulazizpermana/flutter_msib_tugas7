@@ -19,25 +19,28 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Halaman Search'),
       ),
-      body: Column(
-        children: [
-          SearchWidget(
-            hintText: 'Ketikkan Judulnya',
-          ),
-          Consumer<SearchProvider>(
-            builder: (context, searchProvider, child) => Expanded(
+      body: Consumer<SearchProvider>(
+        builder: (context, searchProvider, child) => Column(
+          children: [
+            SearchWidget(
+              controller: controller,
+              hintText: 'Ketikkan Judulnya',
+              onPressed: () => searchProvider.setQuery(controller.text),
+            ),
+            Expanded(
               child: (searchProvider.onSearch)
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
                   : buildPost(),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
