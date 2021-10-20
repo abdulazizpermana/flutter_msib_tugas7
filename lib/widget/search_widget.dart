@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import '../provider/search_provider.dart';
-import 'package:provider/provider.dart';
 
 class SearchWidget extends StatefulWidget {
   String hintText;
+  TextEditingController controller;
+  VoidCallback onPressed;
 
   SearchWidget({
+    required this.controller,
     required this.hintText,
+    required this.onPressed,
     Key? key,
   }) : super(key: key);
 
@@ -15,10 +17,8 @@ class SearchWidget extends StatefulWidget {
 }
 
 class _SearchWidgetState extends State<SearchWidget> {
-  final _searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final searchProvider = Provider.of<SearchProvider>(context, listen: false);
     return Container(
       height: 42,
       margin: const EdgeInsets.fromLTRB(14, 14, 14, 14),
@@ -28,20 +28,19 @@ class _SearchWidgetState extends State<SearchWidget> {
         border: Border.all(color: Colors.black26),
       ),
       child: TextField(
-        controller: _searchController,
+        controller: widget.controller,
         decoration: InputDecoration(
           prefixText: '    ',
           hintText: 'Ketikkan Judul Post',
           suffixIcon: IconButton(
-            onPressed: () {
-              searchProvider.setQuery(_searchController.text);
-            },
+            onPressed: widget.onPressed,
             icon: const Icon(Icons.search),
           ),
           border: InputBorder.none,
         ),
         keyboardType: TextInputType.text,
         textInputAction: TextInputAction.search,
+        onEditingComplete: widget.onPressed,
       ),
     );
   }
