@@ -33,7 +33,7 @@ class SearchProvider extends ChangeNotifier {
       changeOnSearch();
       _searchPosts = await ApiClient.getSearchData(_query);
       (_searchPosts.isEmpty)
-          ? setMessage('Judul Tidak Ditemukan')
+          ? setMessage('Kata Kunci Tidak Ditemukan')
           : setMessage('');
       changeOnSearch();
     } else {

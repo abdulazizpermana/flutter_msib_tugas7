@@ -33,7 +33,7 @@ class _SearchWidgetState extends State<SearchWidget> {
         controller: widget.controller,
         decoration: InputDecoration(
           prefixText: '    ',
-          hintText: 'Ketikkan Judul Post',
+          hintText: widget.hintText,
           suffixIcon: IconButton(
             onPressed: widget.onPressed,
             icon: const Icon(Icons.search),
