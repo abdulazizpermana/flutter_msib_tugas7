@@ -8,15 +8,12 @@ import 'dart:convert';
 
 class ApiClient {
   static Future<List<SearchPost>> getSearchData(String query) async {
-    Uri _uri = Uri.parse('${Constant.baseUrl}wp/v2/search');
+    Uri _uri =
+        Uri.parse('${Constant.baseUrl}wp/v2/search?search=$query&per_page=10');
     final response = await http.get(_uri);
     if (response.statusCode == 200) {
       final List _datas = json.decode(response.body);
-      return _datas.map((json) => SearchPost.fromJson(json)).where((element) {
-        final titleLower = element.title!.toLowerCase();
-        final searchLower = query.toLowerCase();
-        return titleLower.contains(searchLower);
-      }).toList();
+      return _datas.map((json) => SearchPost.fromJson(json)).toList();
     } else {
       throw Exception();
     }

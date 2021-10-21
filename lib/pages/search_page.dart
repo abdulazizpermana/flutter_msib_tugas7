@@ -32,7 +32,7 @@ class _SearchPageState extends State<SearchPage> {
           children: [
             SearchWidget(
               controller: controller,
-              hintText: 'Ketikkan Judulnya',
+              hintText: 'Ketikkan Kata Kunci',
               onPressed: () => searchProvider.setQuery(controller.text),
               onChanged: (String value) {
                 (value.isEmpty) ? {searchProvider.setQuery(value)} : null;
