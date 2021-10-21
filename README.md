@@ -12,5 +12,3 @@ A new Flutter project with API implementation that created by:
 <img src="https://user-images.githubusercontent.com/65402864/137628662-c411bce0-fcb8-4ff9-ac73-d8be9f13d25c.png" width="300">
 <img src="https://user-images.githubusercontent.com/65402864/137628664-9a3c3516-be11-42f0-b7a5-873c98ef8bcf.png" width="300">
 
-## Demo Search
-<img src="https://user-images.githubusercontent.com/65402864/138093611-66ca969c-6b3e-43eb-804f-95ef303f176c.gif" width="300">
