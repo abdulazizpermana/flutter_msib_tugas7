@@ -4,29 +4,26 @@ import '../model/blog_data.dart';
 import '../model/search_post.dart';
 import '../common/constant.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class ApiClient {
-  static Future<List<SearchPost>> getSearchData(String query) async {
+  static Future<dynamic> getSearchData(String query, String page) async {
     Uri _uri =
-        Uri.parse('${Constant.baseUrl}wp/v2/search?search=$query&per_page=10');
+        Uri.parse('${Constant.baseUrl}wp/v2/search?search=$query&page=$page');
     final response = await http.get(_uri);
     if (response.statusCode == 200) {
-      final List _datas = json.decode(response.body);
-      return _datas.map((json) => SearchPost.fromJson(json)).toList();
+      return searchPostFromJson(response.body);
     } else {
-      throw Exception();
+      return [];
     }
   }
 
-  static Future<List<Post>> getData() async {
-    Uri uri = Uri.parse('${Constant.baseUrl}wp/v2/posts');
+  static Future<List<Post>> getData(String page) async {
+    Uri uri = Uri.parse('${Constant.baseUrl}wp/v2/posts?page=$page');
     http.Response response = await http.get(uri);
     if (response.statusCode == 200) {
-      final List _dataPosts = json.decode(response.body);
-      return _dataPosts.map((json) => Post.fromJSON(json)).toList();
+      return postFromJson(response.body);
     } else {
-      throw Exception('Failed to load album');
+      return [];
     }
   }
 }
@@ -38,7 +35,6 @@ class ApiClients {
       Uri.parse("${Constant.baseUrl}jwt-auth/v1/token"),
       body: <String, String>{"username": email, "password": password},
     );
-
     return ReqResLogin.fromJson(_response.body);
   }
 }

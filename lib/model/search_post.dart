@@ -1,3 +1,11 @@
+import 'dart:convert';
+
+List<SearchPost> searchPostFromJson(String str) => List<SearchPost>.from(
+      json.decode(str).map(
+            (x) => SearchPost.fromJson(x),
+          ),
+    );
+
 class SearchPost {
   int? id;
   String? title;
