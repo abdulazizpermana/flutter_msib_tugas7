@@ -6,6 +6,16 @@ class SearchProvider extends ChangeNotifier {
   List<SearchPost> _searchPosts = [];
   List<SearchPost> get searchPosts => _searchPosts;
 
+  bool _lastPost = false;
+  bool get lastPost => _lastPost;
+
+  int _page = 1;
+  int get page => _page;
+  void setPage() {
+    _page = _page + 1;
+    _getMorePost();
+  }
+
   String _query = '';
   String get query => _query;
   void setQuery(String value) {
@@ -26,12 +36,15 @@ class SearchProvider extends ChangeNotifier {
   void init() {
     _searchPosts = [];
     _message = '';
+    _page = 1;
+    _lastPost = false;
   }
 
   Future<dynamic> _getSearchPost() async {
     if (_query.isNotEmpty) {
       changeOnSearch();
-      _searchPosts = await ApiClient.getSearchData(_query);
+      final list = await ApiClient.getSearchData(_query, '$_page');
+      _searchPosts.addAll(list);
       (_searchPosts.isEmpty)
           ? setMessage('Kata Kunci Tidak Ditemukan')
           : setMessage('');
@@ -40,6 +53,16 @@ class SearchProvider extends ChangeNotifier {
       init();
       setMessage('');
     }
+  }
+
+  Future<dynamic> _getMorePost() async {
+    List<SearchPost> list = await ApiClient.getSearchData(_query, '$_page');
+    if (list.isNotEmpty) {
+      _searchPosts.addAll(list);
+    } else {
+      _lastPost = true;
+    }
+    notifyListeners();
   }
 
   void changeOnSearch() {

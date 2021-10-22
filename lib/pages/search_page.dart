@@ -12,12 +12,20 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     final searchProvider = Provider.of<SearchProvider>(context, listen: false);
     searchProvider.init();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        (searchProvider.lastPost) ? null : searchProvider.setPage();
+      }
+    });
   }
 
   @override
@@ -63,6 +71,7 @@ class _SearchPageState extends State<SearchPage> {
                       child: Text(searchProvider.message),
                     )
                   : ListView.separated(
+                      controller: _scrollController,
                       separatorBuilder: (context, index) => const Divider(),
                       itemCount: searchProvider.searchPosts.length,
                       itemBuilder: (context, index) {

@@ -13,11 +13,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  ScrollController _postController = ScrollController();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Provider.of<LoginProvider>(context, listen: false);
+    final postProvider = Provider.of<PostProvider>(context, listen: false);
+    postProvider.init();
+    postProvider.getAllPost();
+    _postController.addListener(() {
+      if (_postController.position.pixels ==
+          _postController.position.maxScrollExtent) {
+        (postProvider.lastPost) ? null : postProvider.setPage();
+      }
+    });
   }
 
   @override
@@ -88,6 +97,7 @@ class _HomePageState extends State<HomePage> {
                 child: CircularProgressIndicator(),
               )
             : ListView.separated(
+                controller: _postController,
                 itemBuilder: (context, index) {
                   final post = provider.posts[index];
                   return ListTile(
